@@ -22,6 +22,8 @@ class PostCell: UITableViewCell {
     
     @IBOutlet weak var photoView: PFImageView!
     
+    @IBOutlet weak var profileImage: PFImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

@@ -20,6 +20,7 @@
 		5CFB65231D1A0CDA00D535E9 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CFB65221D1A0CDA00D535E9 /* PostCell.swift */; };
 		5CFB65291D1B3E0900D535E9 /* InfiniteScrollActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CFB65281D1B3E0900D535E9 /* InfiniteScrollActivityView.swift */; };
 		5CFB652B1D1B500700D535E9 /* DetailPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CFB652A1D1B500700D535E9 /* DetailPostViewController.swift */; };
+		5CFB652D1D1C4A9200D535E9 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CFB652C1D1C4A9200D535E9 /* ProfileViewController.swift */; };
 		8C33FD102FF9D936E44D2B14 /* Pods_ParseStagramUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC17DF2B3E0F4FDCB52BE9EC /* Pods_ParseStagramUITests.framework */; };
 		E87CD3633AB63A81AABA584F /* Pods_ParseStagram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F56716E1CCB6B59D9FD5FA3D /* Pods_ParseStagram.framework */; };
 /* End PBXBuildFile section */
@@ -62,6 +63,7 @@
 		5CFB65221D1A0CDA00D535E9 /* PostCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		5CFB65281D1B3E0900D535E9 /* InfiniteScrollActivityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfiniteScrollActivityView.swift; sourceTree = "<group>"; };
 		5CFB652A1D1B500700D535E9 /* DetailPostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailPostViewController.swift; sourceTree = "<group>"; };
+		5CFB652C1D1C4A9200D535E9 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		A9F4229057A5ED2506D5C9E0 /* Pods-ParseStagramUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ParseStagramUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ParseStagramUITests/Pods-ParseStagramUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B414B1717500413868EC5544 /* Pods-ParseStagramUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ParseStagramUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ParseStagramUITests/Pods-ParseStagramUITests.release.xcconfig"; sourceTree = "<group>"; };
 		C7326EC8581BA3FCA53A06C9 /* Pods-ParseStagramTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ParseStagramTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ParseStagramTests/Pods-ParseStagramTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				5CFB65221D1A0CDA00D535E9 /* PostCell.swift */,
 				5CFB64EC1D18AA0900D535E9 /* AppDelegate.swift */,
 				5CFB64F01D18AA0900D535E9 /* Main.storyboard */,
+				5CFB652C1D1C4A9200D535E9 /* ProfileViewController.swift */,
 				5CFB651C1D19DE8A00D535E9 /* LoggedInViewController.swift */,
 				5CFB651A1D18AE6C00D535E9 /* LoginViewController.swift */,
 				5CFB652A1D1B500700D535E9 /* DetailPostViewController.swift */,
@@ -448,6 +451,7 @@
 				5CFB64ED1D18AA0900D535E9 /* AppDelegate.swift in Sources */,
 				5CFB651D1D19DE8A00D535E9 /* LoggedInViewController.swift in Sources */,
 				5CFB651F1D19F85E00D535E9 /* Post.swift in Sources */,
+				5CFB652D1D1C4A9200D535E9 /* ProfileViewController.swift in Sources */,
 				5CFB65231D1A0CDA00D535E9 /* PostCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

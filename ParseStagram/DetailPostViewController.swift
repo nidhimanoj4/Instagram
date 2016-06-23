@@ -34,6 +34,9 @@ class DetailPostViewController: UIViewController {
         let commentsCountText = String(post["commentsCount"])
         commentsCountLabel.text = commentsCountText + " comments"
         
+        let timeStampLabelText = String(post["timeStamp"])
+        timeStampLabel.text = timeStampLabelText ?? "time unknown"
+        
         let authorUser = post["author"] as! PFUser
         authorLabel.text = authorUser.username ?? ""
         

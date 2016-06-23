@@ -8,6 +8,7 @@ target 'ParseStagram' do
   # Pods for ParseStagram
     pod 'Parse'
     pod 'ParseUI'
+    pod 'MBProgressHUD'
 
   target 'ParseStagramTests' do
     inherit! :search_paths

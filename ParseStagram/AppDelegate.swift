@@ -27,13 +27,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             })
         )
 
+        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+
+        
+        /* Set up the two tabs - My Feed and All Posts
+         */
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let myFeedNavigationController = storyboard.instantiateViewControllerWithIdentifier("MyFeedNavigationController") as! UINavigationController
+        let myLoggedInViewController = myFeedNavigationController.topViewController as! LoggedInViewController
+        myLoggedInViewController.justThisUser = true
+        
+        let allFeedNavigationController = storyboard.instantiateViewControllerWithIdentifier("MyFeedNavigationController") as! UINavigationController
+        let allLoggedInViewController = allFeedNavigationController.topViewController as! LoggedInViewController
+        allLoggedInViewController.justThisUser = false
+        
+        let profileViewController = storyboard.instantiateViewControllerWithIdentifier("ProfileViewController")
+        
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [myFeedNavigationController, allFeedNavigationController, profileViewController]
+        
+        window?.rootViewController = tabBarController
+        window?.makeKeyAndVisible()
+
         
         
-        //check if a user is logged in, in which case skip loginViewController and set initial rootViewController to be the loggedInViewController page
+        
+        
+        /* Persistent User Login
+         * If a user is not logged in (see check below), the root View Controller is loginViewController
+         * If a user is logged in (default),root View Controller is the tabBarController (the initial arrow 
+         * already points to it in storyboard)
+         */
         if PFUser.currentUser() == nil {
             //set initial View controller to be the loggedInViewController
-            
-            self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
             let storyboard:UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             
             let loginViewController:UIViewController = storyboard.instantiateViewControllerWithIdentifier("loginScreen") as UIViewController
@@ -42,21 +68,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         
-        
- /*
-        
-        //check if a user is logged in, in which case skip loginViewController and set initial rootViewController to be the loggedInViewController page
-        if PFUser.currentUser() != nil {
-            //set initial View controller to be the loggedInViewController
-            
-            self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-            let storyboard:UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            
-            let loggedInViewController:UIViewController = storyboard.instantiateViewControllerWithIdentifier("loggedInScreen") as UIViewController
-
-            self.window?.rootViewController = loggedInViewController
-        }
-*/
         return true
     }
 

@@ -17,7 +17,7 @@ class Post: NSObject {
      - parameter caption: Caption text input by the user
      - parameter completion: Block to be executed after save operation is complete
      */
-    class func postUserImage(image: UIImage, withCaption caption: String?, withCompletion completion: PFBooleanResultBlock?) {
+    class func postUserImage(image: UIImage, withCaption caption: String?, withTimeStampText timeStampText: String?, withCompletion completion: PFBooleanResultBlock?) {
         
         // Create Parse object PFObject
         let post = PFObject(className: "Post")
@@ -28,9 +28,26 @@ class Post: NSObject {
         post["caption"] = caption
         post["likesCount"] = 0
         post["commentsCount"] = 0
+        post["timeStamp"] = timeStampText
+        print("timeStamp text when uploading post is \(post["timeStamp"])")
 
         // Save object (following function will save the object in Parse asynchronously)
         post.saveInBackgroundWithBlock(completion)
+    }
+    
+    /* Function: resize
+     * This function resizes a UIImage imagewith the newSize guidelines.
+     */
+    class func resize(image: UIImage, newSize: CGSize) -> UIImage {
+        let resizeImageView = UIImageView(frame: CGRectMake(0, 0, newSize.width, newSize.height))
+        resizeImageView.contentMode = UIViewContentMode.ScaleAspectFill
+        resizeImageView.image = image
+        
+        UIGraphicsBeginImageContext(resizeImageView.frame.size)
+        resizeImageView.layer.renderInContext(UIGraphicsGetCurrentContext()!)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage
     }
     
     /**

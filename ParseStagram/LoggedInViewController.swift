@@ -9,6 +9,7 @@
 import UIKit
 import Parse
 import ParseUI
+import MBProgressHUD
 
 class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
     
@@ -17,9 +18,12 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
     var queryPostsLimit = 20
     var isMoreDataLoading = false
     var loadingMoreView: InfiniteScrollActivityView?
- 
+    var justThisUser = true     //Dictates whether we only want to show posts from current user or all posts
+    
     var posts: [PFObject] = []
 
+    // Initialize a UIRefreshControl
+    let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,9 +32,8 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
         tableView.delegate = self
         tableView.dataSource = self
         
-        // Initialize a UIRefreshControl
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(queryPostsData(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        //Set up the refreshControl
+        refreshControl.addTarget(self, action: #selector(queryPostsData), forControlEvents: UIControlEvents.ValueChanged)
         tableView.insertSubview(refreshControl, atIndex: 28)
 
         
@@ -45,7 +48,7 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
         tableView.contentInset = insets
         
         
-        queryPostsData(refreshControl) //Get the initial query of data and save it to an array of PFObjects - posts
+        queryPostsData() //Get the initial query of data and save it to an array of PFObjects - posts
     }
     
     /* Function: scrollViewDidScroll
@@ -69,20 +72,25 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
                 
                 //So load more posts
                 queryPostsLimit = queryPostsLimit + 20
-                let refreshControl = UIRefreshControl()
-                queryPostsData(refreshControl)
+                queryPostsData()
             }
         }
     }
 
     
-    func queryPostsData(refreshControl: UIRefreshControl) {
+    func queryPostsData() {
         //Construct a PFQuery
         let query = PFQuery(className: "Post")
         //Set up guidelines for the query
         query.orderByDescending("createdAt")
         query.includeKey("author") //Say includeKey because author is a PFUser object within the PFObject post
         query.limit = queryPostsLimit
+        if (justThisUser == true) {
+            query.whereKey("author", equalTo: PFUser.currentUser()!)
+        }
+        
+        // Display HUD right before the request is made
+        MBProgressHUD.showHUDAddedTo(self.view, animated: true)
         
         //Fetch data asynchronously
         query.findObjectsInBackgroundWithBlock { (postsArray: [PFObject]?,error: NSError?) in
@@ -90,11 +98,15 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
                 //Save the fetched data from the query to an array of PFObjects - posts in this class LoggedInViewController
                 self.posts = postsArray
                 
+                //Handles when we are at the bottom and want to extend for more posts
                 self.isMoreDataLoading = false      //Update flag b/c we are no longer currently loading more data
                 self.loadingMoreView!.stopAnimating()   //Stop the animation for the loading more Data indicator
 
-                self.tableView.reloadData()    // Reload the tableView now that there is new data
-                refreshControl.endRefreshing()      //Tell the refreshControl to stop spinning
+                
+                self.tableView.reloadData()     // Reload the tableView now that there is new data
+                self.refreshControl.endRefreshing()      //Tell the refreshControl to stop spinning
+                // Hide HUD once the network request comes back (must be done on main UI thread)
+                MBProgressHUD.hideHUDForView(self.view, animated: true)
 
             } else {
                 print("Posts query returned error")
@@ -128,7 +140,6 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
      * This function dictates the number of rows in the tableView, which is the number of posts.
      */
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("post count is " + String(posts.count))
         return posts.count
     }
     
@@ -147,13 +158,22 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
         cell.captionLabel.text = post.valueForKey("caption") as? String
         cell.likesCountLabel.text = String(post.valueForKey("likesCount")!) + " likes"
         cell.commentCountLabel.text = String(post.valueForKey("commentsCount")!) + " comments"
-    
-        //Use functions to set the photoView to be post.valueForKey("media") which is a PFFile
         
+        //Use functions to set the photoView to be post.valueForKey("media") which is a PFFile
         if let photoImage = post.valueForKey("media") as? PFFile {
             cell.photoView.file = photoImage
             cell.photoView.loadInBackground()
         }
+        
+        //Make the profile image in the Feed's posts a circle
+        cell.profileImage.layer.cornerRadius = cell.profileImage.frame.height / 2
+        cell.profileImage.clipsToBounds = true
+        
+        //Set the profileImage, which is a field (PFFile) of the PFUser
+        let user = PFUser.currentUser()
+        let profilePFFile = user?["profilePic"] as! PFFile
+        cell.profileImage.file = profilePFFile
+        cell.profileImage.loadInBackground()
         
         return cell
     }
@@ -178,21 +198,6 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
         
     }
     
-    /* Function: resize
-     * This function resizes a UIImage imagewith the newSize guidelines.
-     */
-    func resize(image: UIImage, newSize: CGSize) -> UIImage {
-        let resizeImageView = UIImageView(frame: CGRectMake(0, 0, newSize.width, newSize.height))
-        resizeImageView.contentMode = UIViewContentMode.ScaleAspectFill
-        resizeImageView.image = image
-        
-        UIGraphicsBeginImageContext(resizeImageView.frame.size)
-        resizeImageView.layer.renderInContext(UIGraphicsGetCurrentContext()!)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return newImage
-    }
-    
     /* Function: didFinishPickingMediaWithInfo
      * This function uses an instantiated UIImagePickerController for the Photo Library and makes an image with
      * info. It then calls function postUserImage on the Post class with parameters as the resized image
@@ -203,11 +208,29 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
         // Get the image captured by the UIImagePickerController
         let originalImage = info[UIImagePickerControllerOriginalImage] as! UIImage
         
-        let myResize = CGSize.init(width: 289, height: 219)
-        let editedImage = resize(originalImage, newSize: myResize)
+        let myResize = CGSize.init(width: 310, height: 210)
+        let editedImage = Post.resize(originalImage, newSize: myResize)
         
+    
+        //Get Current Date
+        let currentDate = NSDate()
+        let calendar = NSCalendar.currentCalendar()
+        let componentsDay = calendar.components(.Day, fromDate: currentDate)
+        let day = componentsDay.day
+        let componentsMonth = calendar.components(.Month, fromDate: currentDate)
+        let month = componentsMonth.month
+        let componentsYear = calendar.components(.Year, fromDate: currentDate)
+        let year = componentsYear.year
+        
+        let timeStampText = "\(currentDate.toShortTimeString()) \(month)/\(day)/\(year)"
+        
+
+        
+      
         //Use the image - add to the posts
-        Post.postUserImage(editedImage, withCaption: captionField.text, withCompletion: nil)
+        Post.postUserImage(editedImage, withCaption: captionField.text, withTimeStampText: timeStampText) { (success: Bool, error: NSError?) in
+            self.queryPostsData()
+        }
         
         // Dismiss UIImagePickerController to go back to your original view controller
         dismissViewControllerAnimated(true, completion: nil)
@@ -239,4 +262,17 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
      }
     
     
+}
+
+
+extension NSDate {
+    func toShortTimeString() -> String {
+        //Get Short Time String
+        let formatter = NSDateFormatter()
+        formatter.timeStyle = .ShortStyle
+        let timeString = formatter.stringFromDate(self)
+        
+        //Return Short Time String
+        return timeString
+    }
 }
