@@ -1,0 +1,6 @@
+framework module Pods_ParseStagramUITests {
+  umbrella header "Pods-ParseStagramUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

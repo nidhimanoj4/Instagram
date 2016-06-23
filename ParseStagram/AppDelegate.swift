@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Parse
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,7 +16,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        // Initialize Parse
+        // Set applicationId and server based on the values in the Heroku settings.
+        // clientKey is not used on Parse open source unless explicitly configured
+        Parse.initializeWithConfiguration(
+            ParseClientConfiguration(block: { (configuration:ParseMutableClientConfiguration) -> Void in
+                configuration.applicationId = "parse-stagram"
+                configuration.clientKey = "blob"  // set to nil assuming you have not set clientKey
+                configuration.server = "https://parse-stagram.herokuapp.com/parse"
+            })
+        )
+
+        
+        
+        //check if a user is logged in, in which case skip loginViewController and set initial rootViewController to be the loggedInViewController page
+        if PFUser.currentUser() == nil {
+            //set initial View controller to be the loggedInViewController
+            
+            self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+            let storyboard:UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            
+            let loginViewController:UIViewController = storyboard.instantiateViewControllerWithIdentifier("loginScreen") as UIViewController
+            
+            self.window?.rootViewController = loginViewController
+        }
+        
+        
+        
+ /*
+        
+        //check if a user is logged in, in which case skip loginViewController and set initial rootViewController to be the loggedInViewController page
+        if PFUser.currentUser() != nil {
+            //set initial View controller to be the loggedInViewController
+            
+            self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+            let storyboard:UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            
+            let loggedInViewController:UIViewController = storyboard.instantiateViewControllerWithIdentifier("loggedInScreen") as UIViewController
+
+            self.window?.rootViewController = loggedInViewController
+        }
+*/
         return true
     }
 
