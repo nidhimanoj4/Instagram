@@ -34,7 +34,11 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 
-- [ ] List anything else that you can get done to improve the app functionality!
+- [x] Implemented a tab with a collection view of all of the user's photos posted. 
+   - [x] One can click on the images to go to the particular post and view all the details!!!
+- [x] Profile picture on the profile tab is circular!!! :)
+- [x] Learned how to customize the launch screen which has some cool UI
+- [x] Added an app icon among other icons for UI
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
