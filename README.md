@@ -63,11 +63,9 @@ List an 3rd party libraries, icons, graphics, or other assets you used in your a
 
 
 ## Notes
-
-Describe any challenges encountered while building the app.
 Adding the comments tableView within the DetailedViewController was quite difficult and took a while. 
 Also this project was one of the most complex with respect to the number of segues between pages
-so clarifying and naming those (especially in places where there are multiple paths to take) was important and new. 
+so organization and naming (especially in places where there are multiple paths to take) was important. 
 Adding a tabBarController was new and really interesting to implement in the App Delegate. 
 ______
 
