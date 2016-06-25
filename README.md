@@ -34,7 +34,7 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 
-- [x] Implemented a tab with a collection view of all of the user's photos posted. 
+- [x] Implemented a tab with a collection view of all of the user's photos that were posted. 
    - [x] One can click on the images to go to the particular post and view all the details!!!
 - [x] Profile picture on the profile tab is circular!!! :)
 - [x] Learned how to customize the launch screen which has some cool UI
@@ -43,7 +43,7 @@ The following **additional** features are implemented:
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
 1. Using cocoapods to add more animations!
-2. Clarify Sticky headers
+2. Implementation of sticky headers
 
 ## Video Walkthrough
 
