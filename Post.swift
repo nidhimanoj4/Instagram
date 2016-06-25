@@ -9,7 +9,7 @@
 import UIKit
 import Parse
 
-class Post: NSObject {
+class Post: NSObject {    
     /**
      Method to add a user post to Parse (uploading image file)
      
@@ -29,6 +29,12 @@ class Post: NSObject {
         post["likesCount"] = 0
         post["commentsCount"] = 0
         post["timeStamp"] = timeStampText
+        
+        //There is one array for author PFUser and another for commentsText
+        post["commentsArrayUsers"] = [PFUser]()
+        post["commentsArrayComments"] = [String]()
+
+
         print("timeStamp text when uploading post is \(post["timeStamp"])")
 
         // Save object (following function will save the object in Parse asynchronously)

@@ -13,14 +13,18 @@ import MBProgressHUD
 
 class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
     
+    @IBOutlet weak var feedTitle: UILabel!
+    var feedTitleText = ""
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var captionField: UITextField!
     var queryPostsLimit = 20
     var isMoreDataLoading = false
     var loadingMoreView: InfiniteScrollActivityView?
     var justThisUser = true     //Dictates whether we only want to show posts from current user or all posts
+    var justOpenedDetailPostViewController = false
     
     var posts: [PFObject] = []
+    
 
     // Initialize a UIRefreshControl
     let refreshControl = UIRefreshControl()
@@ -28,6 +32,7 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        feedTitle.text = feedTitleText
         //When filling in a tableView, tell it that I am both the delegate and the dataSource
         tableView.delegate = self
         tableView.dataSource = self
@@ -36,20 +41,40 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
         refreshControl.addTarget(self, action: #selector(queryPostsData), forControlEvents: UIControlEvents.ValueChanged)
         tableView.insertSubview(refreshControl, atIndex: 28)
 
-        
         // Set up Infinite Scroll loading indicator
         let frame = CGRectMake(0, tableView.contentSize.height, tableView.bounds.width, InfiniteScrollActivityView.defaultHeight)
         loadingMoreView = InfiniteScrollActivityView(frame: frame)
         loadingMoreView!.hidden = true
         tableView.addSubview(loadingMoreView!)
-        
         var insets = tableView.contentInset
         insets.bottom += InfiniteScrollActivityView.defaultHeight
         tableView.contentInset = insets
         
-        
-        queryPostsData() //Get the initial query of data and save it to an array of PFObjects - posts
+        //Get the initial query of data and save it to an array of PFObjects - posts
+        queryPostsData()
     }
+    
+    override func viewDidAppear(animated: Bool) {
+        if justOpenedDetailPostViewController {
+            queryPostsData()
+        }
+        justOpenedDetailPostViewController = false
+    }
+    
+    @IBAction func Like(sender: AnyObject) {
+        let button = sender as! UIButton
+        let cell = (button.superview)!.superview as! PostCell
+     
+        let indexPath = tableView.indexPathForCell(cell)
+     
+        let post = posts[indexPath!.row]
+        let oldLikesNum = post.valueForKey("likesCount") as! Int
+        post["likesCount"] = oldLikesNum + 1
+        post.saveInBackgroundWithBlock { (success: Bool, error:NSError?) in
+            self.queryPostsData()
+        }
+    }
+
     
     /* Function: scrollViewDidScroll
      * This function describes actions to perform when scrolling to bottom occurred. 
@@ -170,10 +195,13 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
         cell.profileImage.clipsToBounds = true
         
         //Set the profileImage, which is a field (PFFile) of the PFUser
-        let user = PFUser.currentUser()
-        let profilePFFile = user?["profilePic"] as! PFFile
-        cell.profileImage.file = profilePFFile
-        cell.profileImage.loadInBackground()
+        let user = authorUser
+        let profilePFFile = user?["profilePic"] as? PFFile
+        
+        if let profilePFFile = profilePFFile {
+            cell.profileImage.file = profilePFFile
+            cell.profileImage.loadInBackground()
+        }
         
         return cell
     }
@@ -208,7 +236,7 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
         // Get the image captured by the UIImagePickerController
         let originalImage = info[UIImagePickerControllerOriginalImage] as! UIImage
         
-        let myResize = CGSize.init(width: 310, height: 210)
+        let myResize = CGSize.init(width: 650, height: 375)
         let editedImage = Post.resize(originalImage, newSize: myResize)
         
     
@@ -258,6 +286,8 @@ class LoggedInViewController: UIViewController, UIImagePickerControllerDelegate,
             let post = posts[indexPath!.row]
             let detailPostViewController = segue.destinationViewController as! DetailPostViewController
             detailPostViewController.post = post
+            
+            justOpenedDetailPostViewController = true
         }
      }
     

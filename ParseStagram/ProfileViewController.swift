@@ -24,10 +24,11 @@ class ProfileViewController: UIViewController, UIImagePickerControllerDelegate, 
         profilePhoto.clipsToBounds = true
         
         
-        let profilePFFile = user?.valueForKey("profilePic") as! PFFile
-        profilePhoto.file = profilePFFile
-        profilePhoto.loadInBackground()
-
+        let profilePFFile = user?.valueForKey("profilePic") as? PFFile
+        if let profilePFFile = profilePFFile {
+            profilePhoto.file = profilePFFile
+            profilePhoto.loadInBackground()
+        }
     }
 
     override func didReceiveMemoryWarning() {

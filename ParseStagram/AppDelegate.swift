@@ -36,15 +36,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let myFeedNavigationController = storyboard.instantiateViewControllerWithIdentifier("MyFeedNavigationController") as! UINavigationController
         let myLoggedInViewController = myFeedNavigationController.topViewController as! LoggedInViewController
         myLoggedInViewController.justThisUser = true
+        myLoggedInViewController.feedTitleText = "My posts"
         
         let allFeedNavigationController = storyboard.instantiateViewControllerWithIdentifier("MyFeedNavigationController") as! UINavigationController
         let allLoggedInViewController = allFeedNavigationController.topViewController as! LoggedInViewController
         allLoggedInViewController.justThisUser = false
+        allLoggedInViewController.feedTitleText = "Feed"
         
         let profileViewController = storyboard.instantiateViewControllerWithIdentifier("ProfileViewController")
         
+        
+        let myPhotosNavigationController = storyboard.instantiateViewControllerWithIdentifier("PhotoCollectionNavigationController") as! UINavigationController
+        
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [myFeedNavigationController, allFeedNavigationController, profileViewController]
+        tabBarController.viewControllers = [myFeedNavigationController, allFeedNavigationController, profileViewController, myPhotosNavigationController]
         
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
